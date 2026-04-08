@@ -6,8 +6,11 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from decouple import config
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+DATABASE_URL = "postgresql://postgres:ytJoBmKitksXokIivYHyHJkhCpWgPNNJ@mainline.proxy.rlwy.net:56726/railway"
 
 _env_file = BASE_DIR / ".env"
 if _env_file.is_file():

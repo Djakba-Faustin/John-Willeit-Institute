@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import include, path
 from django.views.generic import RedirectView
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 def _redirect_en_prefix_to_unprefixed(request, path=""):
     """
@@ -37,3 +37,4 @@ if settings.DEBUG:
 
 admin.site.site_header = "JW Higher Institute — LMS"
 admin.site.site_title = "LMS Admin"
+urlpatterns += staticfiles_urlpatterns()
