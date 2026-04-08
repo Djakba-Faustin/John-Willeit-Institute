@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if is_teach_hub %}{% trans "Teaching" %}{% else %}{% trans "Lecturer dashboard" %}{% endif %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-2">{% trans "Courses you teach" %}</h1>
+  <p class="text-muted">{% trans "Upload resources, assignments, and quizzes per course. Students see content after you publish it." %}</p>
+  <div class="alert {% if email_notifications_enabled %}alert-success{% else %}alert-warning{% endif %} mt-3" role="alert">
+    <strong>{% trans "Email notifications:" %}</strong>
+    {{ email_notifications_message }}
+  </div>
+  {% if not courses %}
+  <p>{% trans "No courses assigned. Ask an administrator to add you as an instructor on a course." %}</p>
+  {% else %}
+  <ul class="list-group shadow-sm">
+    {% for c in courses %}
+    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <strong>{{ c.code }}</strong> — {{ c.name }}
+        <div class="small text-muted">{{ c.department.name }}</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-primary" href="{% url 'lms:lecturer_course' c.id %}">{% trans "Manage course" %}</a>
+        <a class="btn btn-sm btn-outline-secondary" href="{{ c.get_absolute_url }}">{% trans "Public page" %}</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+
+Project: THE LEARNING MANAGEMENT SYSTEM FOR JOHN WILLEIT HIGHER
+INSTITUTE OF NKONGSAMBA
+
+1.4.1 Overall Objective
+To design and implement a Learning Management System (LMS) that improves teaching,
+learning, communication, and academic management at John Willeit Higher Institute of
+Nkongsamba.
+1.4.2 Specific Objective
+1. To develop LMS functionalities that provide continuous access to lessons, notes, and
+learning materials, ensuring consistent teaching and learning even during lecturer
+unavailability.
+2. To design and implement LMS features that accurately track, record, and evaluate
+students’ academic progress and performance over time.
+3. To integrate modern learning tools,such as quizzes, multimedia content, and
+discussion forums into the LMS while ensuring the platform remains user-friendly
+and accessible for both lecturers and students
+
+
+
+
+1-different department and courses
+
+improve it by adding the different department and courses
+Health Sciences Programs(Courses:Nursing,
+Midwifery, Medical Laboratory Technology)
+Technology Programs(Courses :Software Engineering,Networking & System Administration,Web Development)
+Management & Business Programs(Courses:Accounting,Banking & Finance, Marketing & Business Administration)
+Professional Certification Programs( Courses:Assistant Nursing,
+Assistant Laboratory Technician,
+Assistant Pharmacist,Professional Secretary)
+Language Programs(courses:Intensive English (3 Months)
+Intensive English (6 Months)

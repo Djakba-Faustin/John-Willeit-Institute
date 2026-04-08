@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ post.title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+  <a class="btn btn-sm btn-link ps-0 mb-2" href="{% url 'core:gallery' %}">← {% trans "Back to gallery" %}</a>
+  <h1 class="mb-1">{{ post.title }}</h1>
+  <p class="text-muted small">
+    {{ post.created_at|date:"M d, Y H:i" }}
+    {% if post.created_by %} · {{ post.created_by.get_username }}{% endif %}
+  </p>
+
+  {% if post.media_type == "image" and post.image %}
+  <img src="{{ post.image.url }}" class="img-fluid rounded mb-3" alt="{{ post.title }}">
+  {% elif post.media_type == "video" and post.video_url %}
+  <div class="ratio ratio-16x9 mb-3">
+    <iframe src="{{ post.video_url }}" title="{{ post.title }}" allowfullscreen></iframe>
+  </div>
+  {% endif %}
+
+  {% if post.body %}
+  <p>{{ post.body }}</p>
+  {% endif %}
+
+  <div class="d-flex align-items-center gap-2 mb-4">
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'core:gallery_like' post.id %}">
+      {% csrf_token %}
+      <button class="btn btn-sm {% if user_liked %}btn-danger{% else %}btn-outline-danger{% endif %}" type="submit">
+        {% if user_liked %}{% trans "Unlike" %}{% else %}{% trans "Like" %}{% endif %}
+      </button>
+    </form>
+    {% endif %}
+    <span class="small text-muted">{{ post.likes.count }} {% trans "likes" %} · {{ comments.count }} {% trans "comments" %}</span>
+  </div>
+
+  <h2 class="h5">{% trans "Comments" %}</h2>
+  {% if user.is_authenticated %}
+  <form method="post" action="{% url 'core:gallery_comment' post.id %}" class="mb-3">
+    {% csrf_token %}
+    {{ comment_form.body }}
+    <button class="btn btn-primary btn-sm mt-2" type="submit">{% trans "Post comment" %}</button>
+  </form>
+  {% else %}
+  <p class="small text-muted">{% trans "Log in to comment or like posts." %}</p>
+  {% endif %}
+
+  {% if not comments %}
+  <p class="text-muted">{% trans "No comments yet." %}</p>
+  {% else %}
+  <div class="list-group">
+    {% for c in comments %}
+    <div class="list-group-item">
+      <div class="small text-muted mb-1">{{ c.user.get_username }} · {{ c.created_at|date:"M d, Y H:i" }}</div>
+      <div>{{ c.body|linebreaksbr }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

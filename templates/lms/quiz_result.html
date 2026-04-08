@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Quiz result" %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="h4 mb-2">{% trans "Results" %}: {{ attempt.quiz.title }}</h1>
+  <p class="mb-4">
+    <span class="badge {% if attempt.is_passed %}text-bg-success{% else %}text-bg-warning{% endif %} fs-6">
+      {{ attempt.score_percent }}% — {% if attempt.is_passed %}{% trans "Passed" %}{% else %}{% trans "Below pass mark" %}{% endif %}
+    </span>
+  </p>
+  <ul class="list-group shadow-sm">
+    {% for a in answers %}
+    <li class="list-group-item">
+      <p class="mb-1 fw-semibold">{{ a.question.text }}</p>
+      <p class="mb-0 small">
+        {% trans "Your answer:" %}
+        {% if a.selected %}{{ a.selected.text }}{% else %}<em>{% trans "No answer" %}</em>{% endif %}
+        —
+        {% if a.selected and a.selected.is_correct %}
+        <span class="text-success">{% trans "Correct" %}</span>
+        {% else %}
+        <span class="text-danger">{% trans "Incorrect or incomplete" %}</span>
+        {% endif %}
+      </p>
+    </li>
+    {% endfor %}
+  </ul>
+  <a class="btn btn-primary mt-4" href="{% url 'lms:student_course' attempt.quiz.course.id %}">{% trans "Back to course" %}</a>
+</div>
+{% endblock %}

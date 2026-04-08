@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ thread.title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:forum_list' thread.course.id %}">{% trans "Forum" %}</a></li>
+      <li class="breadcrumb-item active">{{ thread.title }}</li>
+    </ol>
+  </nav>
+  <h1 class="h4 mb-4">{{ thread.title }}</h1>
+  {% for p in posts %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="small text-muted mb-2">{{ p.author }} · {{ p.created_at }}</div>
+      <div class="lesson-content">{{ p.body|linebreaks }}</div>
+    </div>
+  </div>
+  {% endfor %}
+  <div class="card">
+    <div class="card-body">
+      <h2 class="h6">{% trans "Reply" %}</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.body }}
+        {{ form.errors }}
+        <button type="submit" class="btn btn-primary mt-2">{% trans "Post reply" %}</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

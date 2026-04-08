@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Departments" %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="mb-2">{% trans "Departments & programs" %}</h1>
+  <p class="text-muted mb-4">{% trans "Select a department to see its courses." %}</p>
+  <div class="row g-4">
+    {% for dept in departments %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <span class="badge badge-dept mb-2">{{ dept.course_count }} {% trans "courses" %}</span>
+          <h2 class="h5"><a href="{{ dept.get_absolute_url }}" class="text-decoration-none">{{ dept.name }}</a></h2>
+          {% if dept.description %}<p class="small text-muted mb-0">{{ dept.description|truncatewords:28 }}</p>{% endif %}
+        </div>
+        <div class="card-footer bg-transparent border-0 pt-0">
+          <a class="btn btn-sm btn-outline-primary" href="{{ dept.get_absolute_url }}">{% trans "View" %}</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p>{% trans "No departments yet. Run the seed command or add data in the admin." %}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ lesson.title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:student_course' course.id %}">{{ course.code }}</a></li>
+      <li class="breadcrumb-item active">{{ lesson.title }}</li>
+    </ol>
+  </nav>
+  <article class="card shadow-sm">
+    <div class="card-body p-4">
+      <h1 class="h4 mb-3">{{ lesson.title }}</h1>
+      <div class="lesson-content">{{ lesson.content|safe }}</div>
+      {% if lesson.materials.all %}
+      <hr>
+      <h2 class="h6">{% trans "Materials" %}</h2>
+      <ul class="mb-0">
+        {% for m in lesson.materials.all %}
+        <li class="mb-1">
+          <span class="badge bg-light text-dark border me-1">{{ m.get_resource_category_display }}</span>
+          {% if m.kind == 'file' and m.file and m.is_pdf %}<span class="badge badge-pdf me-1">PDF</span>{% endif %}
+          {% if m.kind == 'link' and m.external_url %}
+          <a href="{{ m.external_url }}" rel="noopener noreferrer" target="_blank">{{ m.title }}</a>
+          {% elif m.file %}
+          <a href="{{ m.file.url }}">{{ m.title }}</a>
+          {% else %}
+          {{ m.title }}
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    <div class="card-footer bg-light d-flex flex-wrap gap-2">
+      {% if not completed %}
+      <form action="{% url 'lms:lesson_complete' course.id lesson.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">{% trans "Mark as complete" %}</button>
+      </form>
+      {% else %}
+      <span class="badge text-bg-success align-self-center">{% trans "Completed" %}</span>
+      {% endif %}
+      <a class="btn btn-outline-secondary" href="{% url 'lms:student_course' course.id %}">{% trans "Back to course" %}</a>
+    </div>
+  </article>
+</div>
+{% endblock %}

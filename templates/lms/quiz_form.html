@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 720px;">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:lecturer_course' course.id %}">{{ course.code }}</a></li>
+      <li class="breadcrumb-item active">{% trans "Quiz" %}</li>
+    </ol>
+  </nav>
+  <h1 class="h4 mb-3">{{ title }}</h1>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field.errors }}
+      {{ field }}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+    <a class="btn btn-outline-secondary" href="{% url 'lms:lecturer_course' course.id %}">{% trans "Cancel" %}</a>
+  </form>
+
+  {% if quiz %}
+  <hr class="my-4">
+  <h2 class="h6">{% trans "Questions" %}</h2>
+  <a class="btn btn-sm btn-primary mb-3" href="{% url 'lms:quiz_question_add' course.id quiz.id %}">{% trans "Add question" %}</a>
+  <ul class="list-group shadow-sm">
+    {% for q in questions %}
+    <li class="list-group-item">
+      <span class="badge bg-secondary">{{ q.points }} {% trans "pts" %}</span>
+      {{ q.text|truncatewords:40 }}
+    </li>
+    {% empty %}
+    <li class="list-group-item text-muted">{% trans "No questions yet — students cannot take this quiz until you add at least one." %}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endblock %}

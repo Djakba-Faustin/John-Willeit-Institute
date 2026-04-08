@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Teach" %}: {{ course.code }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:lecturer_dashboard' %}">{% trans "Lecturer dashboard" %}</a></li>
+      <li class="breadcrumb-item active">{{ course.code }}</li>
+    </ol>
+  </nav>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">{{ course.name }}</h1>
+      <p class="text-muted mb-0">{{ course.department.name }}</p>
+    </div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ course.get_absolute_url }}">{% trans "Public catalog page" %}</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-semibold">{% trans "Lessons" %}</div>
+        <div class="card-body">
+          <a class="btn btn-primary btn-sm mb-3" href="{% url 'lms:lesson_create' course.id %}">{% trans "New lesson" %}</a>
+          <ul class="list-group list-group-flush">
+            {% for lesson in lessons %}
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <span>{{ lesson.order }}. {{ lesson.title }} {% if not lesson.published %}<span class="badge bg-warning text-dark">{% trans "Draft" %}</span>{% endif %}</span>
+              <a class="btn btn-sm btn-outline-primary" href="{% url 'lms:lesson_edit' course.id lesson.id %}">{% trans "Edit" %}</a>
+            </li>
+            {% empty %}
+            <li class="list-group-item px-0 text-muted border-0">{% trans "No lessons yet." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-semibold">{% trans "Course resources" %}</div>
+        <div class="card-body">
+          <p class="small text-muted">{% trans "Upload lecture notes, practical guides, and academic PDFs. Attach to a lesson or leave as course-wide resources. File uploads must be PDF." %}</p>
+          <a class="btn btn-primary btn-sm mb-3" href="{% url 'lms:material_add' course.id %}">{% trans "Upload resource" %}</a>
+          <ul class="list-group list-group-flush">
+            {% for m in course_resources %}
+            <li class="list-group-item d-flex justify-content-between align-items-start px-0 gap-2">
+              <div>
+                <span class="badge bg-light text-dark border me-1">{{ m.get_resource_category_display }}</span>
+                <strong>{{ m.title }}</strong>
+                <div class="small text-muted">
+                  {% if m.kind == 'link' and m.external_url %}{{ m.external_url }}
+                  {% elif m.file %}{% trans "File" %}
+                  {% endif %}
+                </div>
+              </div>
+              <form action="{% url 'lms:material_delete' course.id m.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">{% trans "Remove" %}</button>
+              </form>
+            </li>
+            {% empty %}
+            <li class="list-group-item px-0 text-muted border-0">{% trans "No course-wide resources yet." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-semibold">{% trans "Assignments" %}</div>
+        <div class="card-body">
+          <a class="btn btn-primary btn-sm mb-3" href="{% url 'lms:assignment_create' course.id %}">{% trans "New assignment" %}</a>
+          <ul class="list-group list-group-flush">
+            {% for a in assignments %}
+            <li class="list-group-item px-0">
+              <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                <div>
+                  <strong>{{ a.title }}</strong>
+                  {% if not a.published %}<span class="badge bg-secondary">{% trans "Hidden" %}</span>{% endif %}
+                </div>
+                <div class="btn-group btn-group-sm">
+                  <a class="btn btn-outline-primary" href="{% url 'lms:assignment_edit' course.id a.id %}">{% trans "Edit" %}</a>
+                  <a class="btn btn-outline-secondary" href="{% url 'lms:assignment_submissions' course.id a.id %}">{% trans "Submissions" %}</a>
+                </div>
+              </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item px-0 text-muted border-0">{% trans "No assignments yet." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-white fw-semibold">{% trans "Quizzes" %}</div>
+        <div class="card-body">
+          <a class="btn btn-primary btn-sm mb-3" href="{% url 'lms:quiz_create' course.id %}">{% trans "New quiz" %}</a>
+          <ul class="list-group list-group-flush">
+            {% for q in quizzes %}
+            <li class="list-group-item px-0">
+              <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                <div>
+                  <strong>{{ q.title }}</strong>
+                  {% if not q.published %}<span class="badge bg-secondary">{% trans "Draft" %}</span>{% endif %}
+                </div>
+                <div class="btn-group btn-group-sm">
+                  <a class="btn btn-outline-primary" href="{% url 'lms:quiz_edit' course.id q.id %}">{% trans "Edit / questions" %}</a>
+                  <a class="btn btn-outline-secondary" href="{% url 'lms:quiz_attempts' course.id q.id %}">{% trans "Attempts" %}</a>
+                </div>
+              </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item px-0 text-muted border-0">{% trans "No quizzes yet." %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

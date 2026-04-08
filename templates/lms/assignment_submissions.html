@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Submissions" %}: {{ assignment.title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:lecturer_course' course.id %}">{{ course.code }}</a></li>
+      <li class="breadcrumb-item active">{{ assignment.title }}</li>
+    </ol>
+  </nav>
+  <h1 class="h4 mb-3">{% trans "Student submissions" %}</h1>
+  <p class="text-muted">{% trans "Max score" %}: {{ assignment.max_score }}</p>
+  <div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>{% trans "Student" %}</th>
+          <th>{% trans "Submitted" %}</th>
+          <th>{% trans "Score" %}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in submissions %}
+        <tr>
+          <td>{{ s.user.get_full_name|default:s.user.username }}</td>
+          <td>{{ s.submitted_at }}</td>
+          <td>{% if s.score is not None %}{{ s.score }} / {{ assignment.max_score }}{% else %}—{% endif %}</td>
+          <td><a class="btn btn-sm btn-primary" href="{% url 'lms:submission_grade' course.id s.id %}">{% trans "Review / grade" %}</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-muted">{% trans "No submissions yet." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <a class="btn btn-outline-secondary mt-3" href="{% url 'lms:lecturer_course' course.id %}">{% trans "Back to course" %}</a>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Student dashboard" %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1 class="mb-0">{% trans "My courses" %}</h1>
+    {% if user.role == 'student' %}
+    <a class="btn btn-primary" href="{% url 'academics:department_list' %}">{% trans "Browse programs & enroll" %}</a>
+    {% endif %}
+  </div>
+  {% if not enrollments %}
+  <p class="text-muted">{% trans "You are not enrolled yet. Browse" %} <a href="{% url 'academics:department_list' %}">{% trans "departments" %}</a> {% trans "and enroll." %}</p>
+  {% else %}
+  <div class="row g-4">
+    {% for e in enrollments %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <span class="badge bg-secondary">{{ e.course.code }}</span>
+          <h2 class="h5 mt-2">{{ e.course.name }}</h2>
+          <p class="small text-muted mb-0">{{ e.course.department.name }}</p>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <a class="btn btn-primary btn-sm" href="{% url 'lms:student_course' e.course.id %}">{% trans "Continue learning" %}</a>
+          <a class="btn btn-outline-secondary btn-sm" href="{{ e.course.get_absolute_url }}">{% trans "Catalog" %}</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ course.code }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'academics:department_list' %}">{% trans "Departments" %}</a></li>
+      <li class="breadcrumb-item"><a href="{{ course.department.get_absolute_url }}">{{ course.department.name }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ course.code }}</li>
+    </ol>
+  </nav>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <h1 class="mb-1">{{ course.name }}</h1>
+      <p class="text-muted mb-0"><span class="badge bg-secondary">{{ course.code }}</span></p>
+    </div>
+    {% if user.is_authenticated %}
+      {% if user.role == 'student' %}
+        {% if is_enrolled %}
+        <a class="btn btn-success" href="{% url 'lms:student_course' course.id %}">{% trans "Open course" %}</a>
+        {% else %}
+        <form action="{% url 'lms:enroll' course.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">{% trans "Enroll" %}</button>
+        </form>
+        {% endif %}
+      {% endif %}
+    {% else %}
+    <a class="btn btn-outline-primary" href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">{% trans "Log in to enroll" %}</a>
+    {% endif %}
+  </div>
+  {% if course.description %}<p class="lead">{{ course.description }}</p>{% endif %}
+  {% if course.instructors.all %}
+  <p class="small text-muted">{% trans "Instructors:" %}
+    {% for ins in course.instructors.all %}{{ ins.get_full_name|default:ins.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block title %}{{ course.name }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:index' %}">{% trans "LMS" %}</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'lms:student_dashboard' %}">{% trans "My courses" %}</a></li>
+      <li class="breadcrumb-item active">{{ course.code }}</li>
+    </ol>
+  </nav>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">{{ course.name }}</h1>
+      <p class="text-muted mb-0">{{ course.department.name }}</p>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+      <span class="stat-pill">{% trans "Lessons" %}: {{ completed_count }}/{{ lesson_count }}</span>
+      {% if quiz_avg is not None %}
+      <span class="stat-pill">{% trans "Quiz avg." %}: {{ quiz_avg|floatformat:1 }}%</span>
+      {% endif %}
+      <a class="btn btn-outline-primary btn-sm" href="{% url 'lms:forum_list' course.id %}">{% trans "Forum" %}</a>
+    </div>
+  </div>
+
+  <h2 class="h5">{% trans "Materials from your lecturer" %}</h2>
+  <p class="small text-muted">{% trans "Lecture notes, practical guides, and academic resources (PDFs and links). Open PDFs in the browser or download them." %}</p>
+  <ul class="list-group mb-5 shadow-sm">
+    {% for m in lecturer_materials %}
+    <li class="list-group-item d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div>
+        <span class="badge bg-light text-dark border me-1">{{ m.get_resource_category_display }}</span>
+        {% if m.kind == 'file' and m.file %}
+          {% if m.is_pdf %}
+          <span class="badge badge-pdf me-1">PDF</span>
+          {% else %}
+          <span class="badge bg-secondary me-1">{% trans "File" %}</span>
+          {% endif %}
+        {% endif %}
+        <strong>{{ m.title }}</strong>
+        {% if m.lesson %}
+        <div class="small text-muted mt-1">{% trans "Lesson" %}: {{ m.lesson.title }}</div>
+        {% else %}
+        <div class="small text-muted mt-1">{% trans "Course-wide" %}</div>
+        {% endif %}
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        {% if m.kind == 'link' and m.external_url %}
+        <a class="btn btn-sm btn-outline-primary" href="{{ m.external_url }}" target="_blank" rel="noopener noreferrer">{% trans "Open link" %}</a>
+        {% elif m.file %}
+        <a class="btn btn-sm btn-primary" href="{{ m.file.url }}" target="_blank" rel="noopener">{% if m.is_pdf %}{% trans "View / download PDF" %}{% else %}{% trans "Download" %}{% endif %}</a>
+        {% endif %}
+      </div>
+    </li>
+    {% empty %}
+    <li class="list-group-item text-muted">{% trans "No materials uploaded yet." %}</li>
+    {% endfor %}
+  </ul>
+
+  <h2 class="h5">{% trans "Lessons" %}</h2>
+  <div class="list-group mb-5 shadow-sm">
+    {% for lesson in lessons %}
+    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{% url 'lms:lesson_detail' course.id lesson.id %}">
+      <span>{{ lesson.order }}. {{ lesson.title }}</span>
+      {% if lesson.id in completed_ids %}
+      <span class="badge text-bg-success">{% trans "Done" %}</span>
+      {% else %}
+      <span class="badge text-bg-light text-muted border">{% trans "Open" %}</span>
+      {% endif %}
+    </a>
+    {% empty %}
+    <div class="list-group-item text-muted">{% trans "No lessons published yet." %}</div>
+    {% endfor %}
+  </div>
+
+  <h2 class="h5">{% trans "Assignments" %}</h2>
+  <p class="small text-muted">{% trans "Submit online before the due date. You can upload a PDF and/or type your answer." %}</p>
+  <ul class="list-group mb-5 shadow-sm">
+    {% for a, sub in assignment_rows %}
+    <li class="list-group-item d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <strong>{{ a.title }}</strong>
+        {% if a.due_at %}
+        <div class="small {% if a.due_at < now %}text-danger{% else %}text-muted{% endif %}">
+          {% trans "Due" %}: {{ a.due_at|localtime|date:"SHORT_DATETIME_FORMAT" }}
+          {% if a.due_at < now %}<span class="badge bg-danger ms-1">{% trans "Past due" %}</span>{% endif %}
+        </div>
+        {% endif %}
+        {% if sub and sub.score is not None %}
+        <div class="small mt-1"><span class="badge text-bg-info text-dark">{% trans "Graded" %}: {{ sub.score }} / {{ a.max_score }}</span></div>
+        {% elif sub %}
+          {% if sub.text or sub.file %}
+        <div class="small mt-1 text-muted">{% trans "Last submitted" %}: {{ sub.submitted_at|localtime|date:"SHORT_DATETIME_FORMAT" }}</div>
+          {% endif %}
+        {% endif %}
+      </div>
+      <a class="btn btn-sm btn-primary" href="{% url 'lms:student_assignment' course.id a.id %}">{% trans "View / submit" %}</a>
+    </li>
+    {% empty %}
+    <li class="list-group-item text-muted">{% trans "No assignments yet." %}</li>
+    {% endfor %}
+  </ul>
+
+  <h2 class="h5">{% trans "Quizzes" %}</h2>
+  <ul class="list-group shadow-sm">
+    {% for q in quizzes %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span>{{ q.title }}</span>
+      <a class="btn btn-sm btn-primary" href="{% url 'lms:quiz_take' q.id %}">{% trans "Start" %}</a>
+    </li>
+    {% empty %}
+    <li class="list-group-item text-muted">{% trans "No quizzes yet." %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ department.name }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'academics:department_list' %}">{% trans "Departments" %}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ department.name }}</li>
+    </ol>
+  </nav>
+  <h1 class="mb-3">{{ department.name }}</h1>
+  {% if department.description %}<p class="lead">{{ department.description }}</p>{% endif %}
+  <h2 class="h5 mt-4">{% trans "Courses" %}</h2>
+  <ul class="list-group list-group-flush shadow-sm rounded overflow-hidden">
+    {% for c in department.courses.all %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ c.code }}</strong> — {{ c.name }}
+        {% if c.description %}<div class="small text-muted">{{ c.description|truncatewords:24 }}</div>{% endif %}
+      </div>
+      <a class="btn btn-sm btn-primary" href="{{ c.get_absolute_url }}">{% trans "Details" %}</a>
+    </li>
+    {% empty %}
+    <li class="list-group-item">{% trans "No courses in this department yet." %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Upload resource" %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 640px;">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:lecturer_course' course.id %}">{{ course.code }}</a></li>
+      <li class="breadcrumb-item active">{% trans "Resource" %}</li>
+    </ol>
+  </nav>
+  <h1 class="h4 mb-2">{% trans "Upload lecture notes, guides, or resources" %}</h1>
+  <div class="alert alert-light border mb-4 small">
+    {% trans "For file uploads, use PDF format so students can open them consistently. Use “External link” for videos or web pages." %}
+  </div>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field.errors }}
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+    <a class="btn btn-outline-secondary" href="{% url 'lms:lecturer_course' course.id %}">{% trans "Cancel" %}</a>
+  </form>
+</div>
+{% endblock %}

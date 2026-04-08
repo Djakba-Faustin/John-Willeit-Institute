@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "About" %} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h1 class="mb-4">{% trans "About this platform" %}</h1>
+      <p class="lead">{% trans "This Learning Management System supports John Willeit Higher Institute of Nkongsamba in delivering continuous access to learning materials, structured assessment, and communication between lecturers and students." %}</p>
+      <h2 class="h4 mt-4">{% trans "Objectives" %}</h2>
+      <ul>
+        <li>{% trans "Provide ongoing access to lessons, notes, and resources — including when a lecturer is temporarily unavailable." %}</li>
+        <li>{% trans "Record and review academic progress through lesson completion and quiz results." %}</li>
+        <li>{% trans "Combine quizzes, uploads, and forums in one accessible interface." %}</li>
+      </ul>
+      <p class="text-muted mt-4 mb-0"><a href="{% url 'academics:department_list' %}">{% trans "View departments and courses" %}</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

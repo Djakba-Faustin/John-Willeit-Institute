@@ -1,0 +1,197 @@
+:root {
+  --jw-blue: #0a2342;
+  --jw-blue-light: #123a6b;
+  --jw-teal: #0f766e;
+  --jw-teal-light: #14b8a6;
+  --jw-red: #b91c1c;
+  --jw-orange: #ea580c;
+  --jw-cream: #f8fafc;
+  --jw-text: #0f172a;
+  --jw-muted: #64748b;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--jw-text);
+  background: var(--jw-cream);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-brand .brand-title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  max-width: 22rem;
+}
+
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--jw-blue), var(--jw-teal));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.65rem;
+  text-align: center;
+  line-height: 1.1;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 14px rgba(10, 35, 66, 0.25);
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--jw-blue) 0%, var(--jw-blue-light) 45%, var(--jw-teal) 100%);
+  color: #fff;
+  border-radius: 0 0 1.5rem 1.5rem;
+  padding: 3rem 0;
+  box-shadow: 0 12px 40px rgba(10, 35, 66, 0.2);
+}
+
+.hero .lead {
+  opacity: 0.95;
+}
+
+.tagline-fr {
+  color: var(--jw-teal-light);
+  font-size: 0.95rem;
+}
+
+.tagline-en {
+  color: #fecaca;
+  font-size: 0.95rem;
+}
+
+.card {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.card-header {
+  background: linear-gradient(90deg, var(--jw-blue), var(--jw-teal));
+  color: #fff;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: var(--jw-blue);
+  border-color: var(--jw-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--jw-blue-light);
+  border-color: var(--jw-blue-light);
+}
+
+.btn-outline-primary {
+  color: var(--jw-blue);
+  border-color: var(--jw-blue);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--jw-blue);
+  border-color: var(--jw-blue);
+}
+
+.text-accent {
+  color: var(--jw-teal);
+}
+
+.badge-dept {
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--jw-teal);
+  font-weight: 600;
+}
+
+footer.site-footer {
+  margin-top: auto;
+  background: var(--jw-blue);
+  color: #e2e8f0;
+  padding: 2.5rem 0 1.75rem;
+}
+
+footer.site-footer a {
+  color: #bae6fd;
+  text-decoration: none;
+}
+
+footer.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.site-logo-nav,
+.site-logo-footer {
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.footer-institution-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: #f8fafc;
+}
+
+.footer-heading {
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.footer-links li {
+  margin-bottom: 0.35rem;
+}
+
+.footer-motto {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.footer-motto--en {
+  color: #fecaca;
+}
+
+.footer-motto--fr {
+  color: #99f6e4;
+}
+
+.footer-rule {
+  border-color: rgba(148, 163, 184, 0.35);
+  opacity: 1;
+}
+
+.brand-mark--footer {
+  width: 88px;
+  height: 88px;
+  font-size: 0.95rem;
+}
+
+.lesson-content {
+  line-height: 1.7;
+}
+
+.stat-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--jw-teal);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.badge-pdf {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  font-weight: 600;
+  font-size: 0.7rem;
+  vertical-align: middle;
+}

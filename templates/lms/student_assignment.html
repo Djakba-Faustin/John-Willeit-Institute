@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block title %}{{ assignment.title }} — {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 720px;">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'lms:student_course' course.id %}">{{ course.code }}</a></li>
+      <li class="breadcrumb-item active">{{ assignment.title }}</li>
+    </ol>
+  </nav>
+  <h1 class="h4 mb-3">{{ assignment.title }}</h1>
+
+  {% if assignment.due_at %}
+  <div class="alert {% if due_passed %}alert-warning{% else %}alert-light border{% endif %} py-3 mb-4">
+    <div class="fw-semibold">{% trans "Due date & time" %}</div>
+    <div class="mb-0">{{ assignment.due_at|localtime|date:"l, j F Y" }} — <span class="text-body-secondary">{{ assignment.due_at|localtime|time:"H:i" }}</span></div>
+    {% if due_passed %}<div class="small mt-2 mb-0 text-danger">{% trans "This deadline has passed. You can still submit if your lecturer allows it." %}</div>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="lesson-content mb-4">{{ assignment.description|linebreaks }}</div>
+
+  {% if submission and submission.score is not None %}
+  <div class="alert alert-info">
+    <div class="fw-semibold">{% trans "Grade" %}</div>
+    <p class="mb-1">{% trans "Your score" %}: <strong>{{ submission.score }}</strong> / {{ assignment.max_score }}</p>
+    {% if submission.feedback %}<p class="mb-0 small">{{ submission.feedback }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  {% if submission %}
+    {% if submission.text or submission.file %}
+  <div class="card border-0 bg-light mb-4">
+    <div class="card-body py-3">
+      <div class="fw-semibold small text-muted text-uppercase mb-1">{% trans "Your online submission" %}</div>
+      <p class="mb-0 small">{% trans "Last saved" %}: {{ submission.submitted_at|localtime|date:"SHORT_DATETIME_FORMAT" }}</p>
+      {% if submission.file %}
+      <p class="mb-0 mt-2">
+        <a href="{{ submission.file.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+          {% if submission.is_pdf %}{% trans "Open your PDF" %}{% else %}{% trans "Download your file" %}{% endif %}
+        </a>
+      </p>
+      {% endif %}
+    </div>
+  </div>
+    {% endif %}
+  {% endif %}
+
+  <h2 class="h6 mb-3">{% trans "Submit or update your work" %}</h2>
+  <p class="small text-muted">{% trans "Type your answer, upload one PDF, or both. Only PDF files are accepted for uploads." %}</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field.errors }}
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">{% trans "Submit online" %}</button>
+    <a class="btn btn-outline-secondary" href="{% url 'lms:student_course' course.id %}">{% trans "Back to course" %}</a>
+  </form>
+</div>
+{% endblock %}
