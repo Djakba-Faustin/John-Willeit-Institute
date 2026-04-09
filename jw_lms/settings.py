@@ -24,9 +24,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-dev-only-chang
 
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
-<<<<<<< HEAD
+
 ALLOWED_HOSTS = ['john-willeit-institute-1.onrender.com']
-=======
+
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
@@ -38,7 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
->>>>>>> dcec637 (update project for render deployment)
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
