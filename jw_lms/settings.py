@@ -4,13 +4,15 @@ Django settings for John Willeit Higher Institute LMS.
 
 import os
 from pathlib import Path
+import importlib.util
 
+import dj_database_url
 from dotenv import load_dotenv
-from decouple import config
+
+HAS_WHITENOISE = importlib.util.find_spec("whitenoise") is not None
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATABASE_URL = "postgresql://postgres:ytJoBmKitksXokIivYHyHJkhCpWgPNNJ@mainline.proxy.rlwy.net:56726/railway"
 
 _env_file = BASE_DIR / ".env"
 if _env_file.is_file():
@@ -20,9 +22,23 @@ else:
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-dev-only-change-in-production")
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['john-willeit-institute-1.onrender.com']
+=======
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    if host.strip()
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+>>>>>>> dcec637 (update project for render deployment)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -49,6 +65,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+
 ROOT_URLCONF = "jw_lms.urls"
 
 TEMPLATES = [
@@ -72,25 +91,27 @@ TEMPLATES = [
 WSGI_APPLICATION = "jw_lms.wsgi.application"
 
 _POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD") or os.environ.get("PGPASSWORD", "")
+_database_url = os.environ.get("DATABASE_URL", "").strip()
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "postgres"),
-        "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": _POSTGRES_PASSWORD,
-        "HOST": os.environ.get("POSTGRES_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+if _database_url:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            _database_url,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
-
-if not _POSTGRES_PASSWORD:
-    from django.core.exceptions import ImproperlyConfigured
-
-    raise ImproperlyConfigured(
-        "PostgreSQL password is missing. Create a .env file in the project root "
-        "(copy .env.example) and set POSTGRES_PASSWORD, or set the PGPASSWORD environment variable."
-    )
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB", "postgres"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": _POSTGRES_PASSWORD,
+            "HOST": os.environ.get("POSTGRES_HOST", "127.0.0.1"),
+            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -117,6 +138,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+if HAS_WHITENOISE:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -146,3 +169,13 @@ DEFAULT_FROM_EMAIL = os.environ.get(
     "DEFAULT_FROM_EMAIL",
     "no-reply@jwhi-lms.local",
 )
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True").lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
