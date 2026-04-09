@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.templatetags.static import static
 
@@ -5,7 +6,11 @@ from django.templatetags.static import static
 def site_branding(request):
     branding_logo = None
     if finders.find("images/logo.png"):
-        branding_logo = static("images/logo.png")
+        try:
+            branding_logo = static("images/logo.png")
+        except ValueError:
+            # Manifest storage can raise if collectstatic output is out of sync; avoid breaking pages.
+            branding_logo = f"{settings.STATIC_URL}images/logo.png"
     return {
         "SITE_NAME": "John Willeit Higher Institute of Nkongsamba",
         "SITE_NAME_FULL": (

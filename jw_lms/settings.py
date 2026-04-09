@@ -29,11 +29,6 @@ DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
 
 
-ALLOWED_HOSTS = ['john-willeit-institute-7.onrender.com', '.onrender.com']
-
-
-
-
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",")
@@ -45,6 +40,11 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
+# Render sets this to the public https URL of the web service; Django does not accept wildcards
+# like https://*.onrender.com in CSRF_TRUSTED_ORIGINS.
+_render_external = os.environ.get("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
+if _render_external and _render_external not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append(_render_external)
 
 
 INSTALLED_APPS = [
@@ -147,8 +147,10 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 if not DEBUG:
     STATIC_ROOT = BASE_DIR / "staticfiles"
+# Use non-manifest storage so {% static %} never raises when the manifest is missing an entry.
+# Changelist/add views reference more admin assets than the admin index; manifest drift breaks those first.
 if HAS_WHITENOISE and not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
