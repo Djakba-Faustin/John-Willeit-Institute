@@ -1,11 +1,21 @@
+databases:
+  - name: jwlmsdb
+    plan: free
+    databaseName: jw_lms
+    user: jw_lms
+
 services:
   - type: web
-    name: john-willeit-institute
-    env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate
-    startCommand: gunicorn jw_lms.wsgi:application
+    name: john-willeit-institute
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn jw_lms.asgi:application -k uvicorn.workers.UvicornWorker"
     envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: jwlmsdb
+          property: connectionString
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG
@@ -14,5 +24,5 @@ services:
         value: ".onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://*.onrender.com"
-      - key: DATABASE_URL
-        sync: false
+      - key: WEB_CONCURRENCY
+        value: "4"

@@ -21,15 +21,20 @@ else:
     load_dotenv(encoding="utf-8")
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-dev-only-change-in-production")
+if SECRET_KEY == "django-insecure-dev-only-change-in-production":
+    SECRET_KEY = os.environ.get("SECRET_KEY", SECRET_KEY)
 
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
+<<<<<<< HEAD
 
 ALLOWED_HOSTS = ['john-willeit-institute-5.onrender.com', '.onrender.com']
 
+=======
+>>>>>>> 283cfd8 (update project for render deployment issue)
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+    for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",")
     if host.strip()
 ]
 
@@ -38,7 +43,10 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
+<<<<<<< HEAD
 
+=======
+>>>>>>> 283cfd8 (update project for render deployment issue)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -92,13 +100,14 @@ WSGI_APPLICATION = "jw_lms.wsgi.application"
 
 _POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD") or os.environ.get("PGPASSWORD", "")
 _database_url = os.environ.get("DATABASE_URL", "").strip()
+_db_ssl_require = os.environ.get("DB_SSL_REQUIRE", "False").lower() in ("1", "true", "yes")
 
 if _database_url:
     DATABASES = {
         "default": dj_database_url.parse(
             _database_url,
             conn_max_age=600,
-            ssl_require=True,
+            ssl_require=_db_ssl_require,
         )
     }
 else:
@@ -135,10 +144,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
-if HAS_WHITENOISE:
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+if HAS_WHITENOISE and not DEBUG:
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "media/"
