@@ -28,7 +28,7 @@ DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
 
 
-ALLOWED_HOSTS = ['john-willeit-institute-6.onrender.com', '.onrender.com']
+ALLOWED_HOSTS = ['john-willeit-institute-7.onrender.com', '.onrender.com']
 
 
 
