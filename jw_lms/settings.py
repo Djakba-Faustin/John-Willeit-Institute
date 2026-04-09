@@ -26,12 +26,12 @@ if SECRET_KEY == "django-insecure-dev-only-change-in-production":
 
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
-<<<<<<< HEAD
 
-ALLOWED_HOSTS = ['john-willeit-institute-5.onrender.com', '.onrender.com']
 
-=======
->>>>>>> 283cfd8 (update project for render deployment issue)
+ALLOWED_HOSTS = ['john-willeit-institute-6.onrender.com', '.onrender.com']
+
+
+
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",")
@@ -43,10 +43,10 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
-<<<<<<< HEAD
 
-=======
->>>>>>> 283cfd8 (update project for render deployment issue)
+
+
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
