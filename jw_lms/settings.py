@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-dev-only-chang
 DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes")
 
 
-ALLOWED_HOSTS = ['john-willeit-institute-4.onrender.com', '.onrender.com']
+ALLOWED_HOSTS = ['john-willeit-institute-5.onrender.com', '.onrender.com']
 
 ALLOWED_HOSTS = [
     host.strip()
